@@ -1,18 +1,38 @@
 import { useState } from 'react';
+import Layout from '../components/Layout';
+import { Comments } from "../components/Comments.js";
+import { AddComment } from "../components/AddComment.js";
 
 const Article = ({ data }) => {
     const [comments, setComments] = useState(data.comments);
 
-    // api url nodig
-    NEXT_PUBLIC_
+    const handleSubmit = async (comment) => {
+        comment.article = data.id;
+        const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/comments/`,
+            {
+                method: "POST",
+                body: JSON.stringify(comment),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        if (response.ok){
+            const result = await response.json();
+            const tmp = [...comments, result];
+            setComments(tmp);
+        }
+    }
 
     return ( 
-        <>
-            <article>
+        <Layout>
+            <>
                 <h2>{data.title}</h2>
-                <p>{data.content}</p>
-            </article>
-        </>
+                <ReactMarkdown source={data.content} escapeHtml={false} />
+                <Comments comments={comments} />
+                <AddComment onSubmit={handleSubmit} />
+            </>
+        </Layout>
      );
 };
 
@@ -30,11 +50,14 @@ export const getStaticPaths = async () => {
 }
 
 export async function getStaticProps({ params }) {
-    // params contains the post `id`.
-    // If the route is like /posts/1, then params.id is 1
-    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/articles/?slug=${params.id}`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/articles/?slug=${params.slug}`)
     const data = await res.json()
   
     // Pass post data to the page via props
-    return { props: { data } }
+    return { 
+        props: { 
+            data: data.pop(),
+        }, 
+        revalidate: 1,
+    }
 }
