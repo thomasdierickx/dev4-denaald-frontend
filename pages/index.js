@@ -9,10 +9,12 @@ export default function Home({ data }) {
       <p>{process.env.NEXT_PUBLIC_DEMO}</p>
       <div className={styles.grid}>
         {data.map((article) => (
-          <a key={article.id} href={`${process.env.NEXT_PUBLIC_STRAPI_URL}/articles/?id=${article.id}`} className={styles.card}>
-            <h3>{article.title}</h3>
-            <p>{article.description}</p>
-          </a>
+          <Link href="/articles">
+            <a key={article.id} href="" className={styles.card}>
+              <h3>{article.title}</h3>
+              <p>{article.description}</p>
+            </a>
+          </Link>
         ))}
       </div>
     </Layout>

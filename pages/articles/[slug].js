@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import Layout from '../components/Layout';
-import { Comments } from "../components/Comments.js";
-import { AddComment } from "../components/AddComment.js";
+import ReactMarkdown from 'react-markdown';
+import Layout from '../../components/Layout';
+import Comments from "../../components/Comments.js";
+import AddComment from "../../components/AddComment.js";
 
 const Article = ({ data }) => {
     const [comments, setComments] = useState(data.comments);
@@ -27,10 +28,10 @@ const Article = ({ data }) => {
     return ( 
         <Layout>
             <>
-                <h2>{data.title}</h2>
-                <ReactMarkdown source={data.content} escapeHtml={false} />
-                <Comments comments={comments} />
-                <AddComment onSubmit={handleSubmit} />
+              <h2>{data.title}</h2>
+              <ReactMarkdown source={data.content} escapeHtml={false} />
+              <Comments comments={comments} />
+              <AddComment onSubmit={handleSubmit} />
             </>
         </Layout>
      );
@@ -44,7 +45,7 @@ export const getStaticPaths = async () => {
     const data = await res.json()
     
     return {
-        paths: data.map((article) => ({params: {id: ''+article.id}})),
+        paths: data.map((article) => ({params: {slug: ''+article.slug}})),
         fallback: false,
     }
 }
